@@ -17,7 +17,7 @@ const EditTransact = ({ setEditTransPop, trans }) => {
 
   const handleEdit = async (isDeleted) => {
     const token = localStorage.getItem("token");
-    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const baseUrl = import.meta.env.VITE_BACKEND_URL;
     try {
       const res = await fetch(`${baseUrl}/transact/edittransact`, {
         method: "POST",

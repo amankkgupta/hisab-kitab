@@ -19,7 +19,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const baseUrl = import.meta.env.VITE_BACKEND_URL;
     try {
       const res = await fetch(`${baseUrl}/auth/signup`, {
         method: "POST",

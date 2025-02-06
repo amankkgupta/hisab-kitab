@@ -23,7 +23,7 @@ const Transact = ({ setAddTransPop }) => {
     if (transData.transType) {
       amount=-Math.abs(Number(amount));
     }
-    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const baseUrl = import.meta.env.VITE_BACKEND_URL;
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(`${baseUrl}/transact/addtransact`, {

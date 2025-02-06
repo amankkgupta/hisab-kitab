@@ -13,9 +13,9 @@ const UserProvider = ({ children }) => {
 
   const fetchData = async () => {
     const token = localStorage.getItem("token");
-    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const baseUrl = import.meta.env.VITE_BACKEND_URL;
     try {
-      const res = await fetch(`${baseUrl}/customer/fetchallcustomers`, {
+      const res = await fetch(`${baseUrl}/customer/fetchuser`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -25,8 +25,8 @@ const UserProvider = ({ children }) => {
       const resData = await res.json();
       if (!res.ok) throw new Error(resData.message || "Something went wrong!");
       console.log(resData);
-      const t=resData.customers.reduce((sum, customer)=>{
-        return sum+customer.totalAmount;
+      const t=resData.lastTransact.reduce((sum, transact)=>{
+        return sum+transact.totalAmount;
       },0)
       setAllTotal(t);
       setUser(resData);

@@ -13,7 +13,7 @@ const Login = () => {
 
   const handleSubmit= async (e)=>{
     e.preventDefault();
-    const basrUrl= import.meta.env.VITE_API_BASE_URL;
+    const basrUrl= import.meta.env.VITE_BACKEND_URL;
     try{
         const res= await fetch(`${basrUrl}/auth/signin`, {
             method: "POST",

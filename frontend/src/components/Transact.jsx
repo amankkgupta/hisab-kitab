@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { UserContext } from "../contexts/UserContext";
 import { toast } from "sonner";
 
-const Transact = ({ setAddTransPop }) => {
+const Transact = ({ setAddTransPop, fetchAllTransacts }) => {
   const { transData, fetchData } = useContext(UserContext);
   const [data, setData] = useState({
     amount: "",
@@ -49,7 +49,11 @@ const Transact = ({ setAddTransPop }) => {
       if (!res.ok) throw new Error(resData.message || "unpected error");
       toast.success(resData.message);
       setAddTransPop(false);
-      fetchData();
+      if(fetchAllTransacts){
+        fetchAllTransacts();
+      }else {
+        fetchData();
+      }
     } catch (err) {
       toast.error(err.message);
     }

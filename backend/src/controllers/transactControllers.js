@@ -42,7 +42,13 @@ const fetchAllTransact = async (req, res) => {
         { userId: customerId, customerId: userId },
       ],
     });
-    res.status(200).json({ trans });
+    const record = await recordModel.findOne({
+      $or: [
+        { userId, customerId },
+        { userId: customerId, customerId: userId },
+      ],
+    });
+    res.status(200).json({ trans, record });
   } catch (err) {
     res.status(400).json({ message: "Server error !" });
   }

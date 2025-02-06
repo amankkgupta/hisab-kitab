@@ -1,25 +1,31 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { UserContext } from "../contexts/UserContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import dayjs from "dayjs";
 import Transact from "../components/Transact";
 import EditTransact from "../components/EditTransact";
 
 const CustomerView = () => {
-  const navigate = useNavigate();
-  const { customerData, user, setTransData, records } = useContext(UserContext);
-  const { customerName, customerId, customerInd, isSupplier } = customerData;
+  const { setTransData } = useContext(UserContext);
   const [addTransPop, setAddTransPop] = useState(false);
   const [editTransPop, setEditTransPop] = useState(false);
   const [transacts, setTransacts] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
   const [trans, setTrans] = useState(null);
+  const historyDiv = useRef(null);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const customerName = searchParams.get("customerName");
+  const customerId = searchParams.get("customerId");
+  const isSupplier = searchParams.get("isSupplier");
+  const userId = searchParams.get("userId");
 
   let dueadv;
   if (isSupplier) {
-    dueadv = records[customerInd].totalAmount > 0 ? "Adv" : "Due";
+    dueadv = totalAmount > 0 ? "Adv" : "Due";
   } else {
-    dueadv = records[customerInd].totalAmount < 0 ? "Adv" : "Due";
+    dueadv = totalAmount < 0 ? "Adv" : "Due";
   }
 
   const handleTrans = (transType) => {
@@ -30,35 +36,45 @@ const CustomerView = () => {
       customerId,
       isSupplier,
     });
+    scrollToBottom();
   };
 
   const handleEditTrans = (trans) => {
     setEditTransPop(true);
     setTrans({ ...trans, isSupplier });
+    scrollToBottom();
   };
 
+  const fetchAllTransacts = async () => {
+    const token = localStorage.getItem("token");
+    const baseUrl = import.meta.env.VITE_BACKEND_URL;
+    try {
+      const res = await fetch(`${baseUrl}/transact/fetchalltransact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ customerId }),
+      });
+      const resData = await res.json();
+      if (!res.ok) throw new Error(resData.message || "Unexpected error !");
+      setTransacts(resData.trans);
+      setTotalAmount(resData.record.totalAmount);
+      scrollToBottom();
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
   useEffect(() => {
-    const fetchAllTransact = async () => {
-      const token = localStorage.getItem("token");
-      const baseUrl = import.meta.env.VITE_BACKEND_URL;
-      try {
-        const res = await fetch(`${baseUrl}/transact/fetchalltransact`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ customerId }),
-        });
-        const resData = await res.json();
-        if (!res.ok) throw new Error(resData.message || "Unexpected error !");
-        setTransacts(resData.trans);
-      } catch (err) {
-        toast.error(err.message);
-      }
-    };
-    fetchAllTransact();
-  }, [user]);
+    fetchAllTransacts();
+  }, [transacts]);
+
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      historyDiv.current?.scrollIntoView({ behavior: "smooth" });
+    }, 0);
+  };
 
   return (
     <div className="md:max-w-1/2 h-screen w-full p-2 flex flex-col">
@@ -112,7 +128,7 @@ const CustomerView = () => {
                     className={`${backcolor}  m-1 w-1/2 p-1 rounded-md`}
                   >
                     <h1 className="text-sm w-full bg-yellow-100 rounded-md px-1">
-                      {user.userId == trans.userId
+                      {userId == trans.userId
                         ? "Added by me"
                         : `Added by ${customerName}`}
                     </h1>
@@ -135,6 +151,7 @@ const CustomerView = () => {
               </React.Fragment>
             );
           })}
+        <div ref={historyDiv} />
       </div>
 
       {!editTransPop && (
@@ -147,7 +164,7 @@ const CustomerView = () => {
                   dueadv == "Due" ? "text-red-700" : "text-emerald-700"
                 } font-bold text-2xl`}
               >
-                ${Math.abs(records[customerInd].totalAmount)} {dueadv}
+                ${Math.abs(totalAmount)} {dueadv}
               </h1>
             </div>
           )}
@@ -165,7 +182,9 @@ const CustomerView = () => {
               Give
             </button>
           </div>
-          {addTransPop && <Transact {...{ setAddTransPop }} />}
+          {addTransPop && (
+            <Transact {...{ setAddTransPop, fetchAllTransacts }} />
+          )}
         </div>
       )}
       {editTransPop && <EditTransact {...{ setEditTransPop, trans }} />}

@@ -9,7 +9,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [addCustomerPop, setAddCustomerPop] = useState(false);
   const [addTransPop, setAddTransPop] = useState(false);
-  const { user, records, fetchData, allTotal, setTransData, setCustomerData } =
+  const { user, records, fetchData, allTotal, setTransData } =
     useContext(UserContext);
 
   const showAddCustomer = () => {
@@ -26,14 +26,10 @@ const Dashboard = () => {
     });
   };
 
-  const handleCustomerView = (name, id, ind, sup) => {
-    setCustomerData({
-      customerName: name,
-      customerId: id,
-      customerInd: ind,
-      isSupplier: sup
-    });
-    navigate("/customerview");
+  const handleCustomerView = (name, id, sup) => {
+    navigate(
+      `/customerview?customerName=${name}&customerId=${id}&userId=${user.userId}&isSupplier=${sup}`
+    );
   };
 
   useEffect(() => {
@@ -97,7 +93,8 @@ const Dashboard = () => {
                   ? "text-red-700"
                   : "text-emerald-700";
             } else {
-              status = records[ind].lastTransact?.amount < 0 ? "Taken" : "Given";
+              status =
+                records[ind].lastTransact?.amount < 0 ? "Taken" : "Given";
               totalcolor =
                 records[ind].totalAmount < 0
                   ? "text-emerald-700"
@@ -117,7 +114,7 @@ const Dashboard = () => {
                   <div
                     className=" flex-grow"
                     onClick={() => {
-                      handleCustomerView(customer.name, customer._id, ind, supplier);
+                      handleCustomerView(customer.name, customer._id, supplier);
                     }}
                   >
                     <h1>
@@ -145,13 +142,17 @@ const Dashboard = () => {
                     ${Math.abs(records[ind].totalAmount)}
                   </h1>
                   <button
-                    onClick={() => handleTrans(1, customer.name, customer._id, supplier)}
+                    onClick={() =>
+                      handleTrans(1, customer.name, customer._id, supplier)
+                    }
                     className="bg-green-500 p-1 rounded-md"
                   >
                     Take
                   </button>
                   <button
-                    onClick={() => handleTrans(0, customer.name, customer._id, supplier)}
+                    onClick={() =>
+                      handleTrans(0, customer.name, customer._id, supplier)
+                    }
                     className="bg-red-500 p-1 rounded-md"
                   >
                     Give

@@ -9,27 +9,29 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [addCustomerPop, setAddCustomerPop] = useState(false);
   const [addTransPop, setAddTransPop] = useState(false);
-  const { user, fetchData, allTotal, setTransData, setCustomerData } =
+  const { user, records, fetchData, allTotal, setTransData, setCustomerData } =
     useContext(UserContext);
 
   const showAddCustomer = () => {
     setAddCustomerPop(!addCustomerPop);
   };
 
-  const handleTrans = (transType, customerName, customerId) => {
+  const handleTrans = (transType, customerName, customerId, isSupplier) => {
     setAddTransPop(true);
     setTransData({
       transType,
       customerName,
       customerId,
+      isSupplier,
     });
   };
 
-  const handleCustomerView = (name, id, ind) => {
+  const handleCustomerView = (name, id, ind, sup) => {
     setCustomerData({
       customerName: name,
       customerId: id,
       customerInd: ind,
+      isSupplier: sup
     });
     navigate("/customerview");
   };
@@ -86,6 +88,22 @@ const Dashboard = () => {
         {user != null &&
           user.customers &&
           user.customers.map((customer, ind) => {
+            const supplier = records[ind].userId != user.userId;
+            let status, totalcolor;
+            if (supplier) {
+              status = records[ind].lastTransact.amount < 0 ? "Given" : "Taken";
+              totalcolor =
+                records[ind].totalAmount < 0
+                  ? "text-red-700"
+                  : "text-emerald-700";
+            } else {
+              status = records[ind].lastTransact?.amount < 0 ? "Taken" : "Given";
+              totalcolor =
+                records[ind].totalAmount < 0
+                  ? "text-emerald-700"
+                  : "text-red-700";
+            }
+
             return (
               <div
                 key={ind}
@@ -99,45 +117,41 @@ const Dashboard = () => {
                   <div
                     className=" flex-grow"
                     onClick={() => {
-                      handleCustomerView(customer.name, customer._id, ind);
+                      handleCustomerView(customer.name, customer._id, ind, supplier);
                     }}
                   >
-                    <h1>{customer.name}</h1>
-                    {customer.lastTransact && (
+                    <h1>
+                      {customer.name} {supplier ? "(Supplier)" : ""}
+                    </h1>
+                    {records[ind]?.lastTransact && (
                       <>
                         <h1
                           className={`${
-                            customer.lastTransact.isDeleted
+                            records[ind].lastTransact.isDeleted
                               ? "line-through"
                               : ""
                           } text-xs text-gray-800`}
-                        >{`$${Math.abs(customer.lastTransact.amount)} ${
-                          customer.lastTransact.amount < 0 ? "Taken" : "Given"
-                        } on ${dayjs(customer.lastTransact.date).format(
-                          "D MMM YYYY hh:mma"
-                        )}`}</h1>
+                        >{`$${Math.abs(
+                          records[ind].lastTransact.amount
+                        )} ${status} on ${dayjs(
+                          records[0].lastTransact?.date
+                        ).format("D MMM YYYY hh:mma")}`}</h1>
                       </>
                     )}
                   </div>
                 </div>
                 <div className="flex justify-between items-center gap-1">
-                  <h1
-                    className={`${
-                      customer.totalAmount < 0
-                        ? "text-emerald-700"
-                        : "text-red-700"
-                    } font-bold`}
-                  >
-                    ${Math.abs(customer.totalAmount)}
+                  <h1 className={`${totalcolor} font-bold`}>
+                    ${Math.abs(records[ind].totalAmount)}
                   </h1>
                   <button
-                    onClick={() => handleTrans(1, customer.name, customer._id)}
+                    onClick={() => handleTrans(1, customer.name, customer._id, supplier)}
                     className="bg-green-500 p-1 rounded-md"
                   >
                     Take
                   </button>
                   <button
-                    onClick={() => handleTrans(0, customer.name, customer._id)}
+                    onClick={() => handleTrans(0, customer.name, customer._id, supplier)}
                     className="bg-red-500 p-1 rounded-md"
                   >
                     Give

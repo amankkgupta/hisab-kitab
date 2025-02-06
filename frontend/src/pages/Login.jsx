@@ -23,7 +23,6 @@ const Login = () => {
             body: JSON.stringify(data)
         })
         const resData= await res.json();
-        console.log(resData);
         if(!res.ok)
             throw new Error(resData.message || "Something went wrong");
         toast.success(resData.message);

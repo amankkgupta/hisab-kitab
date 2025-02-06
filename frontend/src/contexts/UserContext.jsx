@@ -3,10 +3,9 @@ import { toast } from "sonner";
 
 const UserContext = createContext(null);
 
-
 const UserProvider = ({ children }) => {
-  
   const [user, setUser] = useState(null);
+  const [records, setRecords] = useState(null);
   const [allTotal, setAllTotal] = useState(0);
   const [transData, setTransData] = useState({});
   const [customerData, setCustomerData] = useState({});
@@ -24,19 +23,32 @@ const UserProvider = ({ children }) => {
       });
       const resData = await res.json();
       if (!res.ok) throw new Error(resData.message || "Something went wrong!");
-      console.log(resData);
-      const t=resData.lastTransact.reduce((sum, transact)=>{
-        return sum+transact.totalAmount;
-      },0)
-      setAllTotal(t);
-      setUser(resData);
+      const total = resData.records.reduce((sum, record) => {
+        if (record.userId != resData.user.userId) sum -= record.totalAmount;
+        else sum += record.totalAmount;
+        return sum;
+      }, 0);
+      setAllTotal(total);
+      setUser(resData.user);
+      setRecords(resData.records);
     } catch (err) {
       toast.error(err.message || "Something went wrong!");
     }
   };
 
   return (
-    <UserContext.Provider value={{ user, transData, customerData, allTotal, setTransData, setCustomerData, fetchData }}>
+    <UserContext.Provider
+      value={{
+        user,
+        records,
+        transData,
+        customerData,
+        allTotal,
+        setTransData,
+        setCustomerData,
+        fetchData,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

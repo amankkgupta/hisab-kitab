@@ -20,7 +20,7 @@ const signup = async (req, res) => {
       .status(201)
       .json({ message: "Success ! Verification Link sent to email." });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(400).json({ message: "something went wrong" });
   }
 };

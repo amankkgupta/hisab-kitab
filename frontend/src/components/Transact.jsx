@@ -8,7 +8,7 @@ const Transact = ({ setAddTransPop }) => {
     amount: "",
     note: "",
   });
-  
+
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
@@ -19,10 +19,17 @@ const Transact = ({ setAddTransPop }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let amount= data.amount;
-    if (transData.transType) {
-      amount=-Math.abs(Number(amount));
+    let amount = data.amount;
+    if (transData.isSupplier) {
+      if (!transData.transType) {
+        amount = -Math.abs(Number(amount));
+      }
+    } else {
+      if (transData.transType) {
+        amount = -Math.abs(Number(amount));
+      }
     }
+
     const baseUrl = import.meta.env.VITE_BACKEND_URL;
     const token = localStorage.getItem("token");
     try {
@@ -32,9 +39,12 @@ const Transact = ({ setAddTransPop }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ note: data.note, amount, customerId: transData.customerId }),
+        body: JSON.stringify({
+          note: data.note,
+          amount,
+          customerId: transData.customerId,
+        }),
       });
-      console.log(res);
       const resData = await res.json();
       if (!res.ok) throw new Error(resData.message || "unpected error");
       toast.success(resData.message);

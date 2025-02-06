@@ -1,17 +1,20 @@
 const customerModel = require("../models/customerModel");
+const recordModel = require("../models/recordModel");
 const transactionModel = require("../models/transactionModel");
 
 const addTransact = async (req, res) => {
-  const {userId, myId}= req.user;
+  const { userId, myId } = req.user;
   const { customerId, amount, note } = req.body;
   if (!amount)
     return res.status(400).json({ message: "Please Enter Amount !" });
   try {
-    const customer = await customerModel.findById(customerId, {
-      lastTransact: 1,
-      totalAmount: 1,
+    const record = await recordModel.findOne({
+      $or: [
+        { userId, customerId },
+        { userId: customerId, customerId: userId },
+      ],
     });
-    let totalAmount = Number(amount) + Number(customer.totalAmount);
+    let totalAmount = Number(amount) + Number(record.totalAmount);
     const trans = await transactionModel.create({
       userId,
       customerId,
@@ -19,12 +22,12 @@ const addTransact = async (req, res) => {
       totalAmount,
       note,
     });
-    customer.lastTransact = trans._id;
-    customer.totalAmount = totalAmount;
-    await customer.save();
+    record.lastTransact = trans._id;
+    record.totalAmount = totalAmount;
+    await record.save();
     res.status(201).json({ message: "Transaction successful!" });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(400).json({ message: "Server error" });
   }
 };
@@ -33,7 +36,12 @@ const fetchAllTransact = async (req, res) => {
   const { userId } = req.user;
   const { customerId } = req.body;
   try {
-    const trans = await transactionModel.find({ customerId, userId });
+    const trans = await transactionModel.find({
+      $or: [
+        { userId, customerId },
+        { userId: customerId, customerId: userId },
+      ],
+    });
     res.status(200).json({ trans });
   } catch (err) {
     res.status(400).json({ message: "Server error !" });
@@ -43,25 +51,26 @@ const fetchAllTransact = async (req, res) => {
 const editTransact = async (req, res) => {
   const { userId } = req.user;
   const { transactId, note, isDeleted } = req.body;
+  const trans = await transactionModel.findOne({ _id: transactId });
+  if (userId != trans.userId)
+    return res.status(403).json({ message: "Not Autherized !" });
   try {
     if (isDeleted) {
-      const trans = await transactionModel.findOneAndUpdate(
-        { _id: transactId },
-        { isDeleted },
-        { new: true }
-      );
-      console.log(trans.amount);
-      await customerModel.updateOne(
-        { _id: trans.customerId },
+      trans.isDeleted = true;
+      await trans.save();
+      await recordModel.updateOne(
+        {
+          $or: [
+            { userId, customerId: trans.customerId },
+            { userId: trans.customerId, customerId: userId },
+          ],
+        },
         { $inc: { totalAmount: -trans.amount } }
       );
       res.status(200).json({ message: "Deleted Successfully !" });
     } else {
-      const trans = await transactionModel.updateOne(
-        { _id: transactId },
-        { note },
-        { new: true }
-      );
+      trans.note = note;
+      await trans.save();
       res.status(200).json({ message: "Edited Successfully !" });
     }
   } catch (err) {

@@ -7,6 +7,15 @@ const EditTransact = ({ setEditTransPop, trans }) => {
   const [note, setNote] = useState(trans.note);
   const { fetchData } = useContext(UserContext);
 
+  let dueadv, givetake;
+  if (trans.isSupplier) {
+    dueadv = trans.totalAmount > 0 ? "Adv" : "Due";
+    givetake = trans.amount > 0 ? "Taken" : "Given";
+  } else {
+    dueadv = trans.totalAmount < 0 ? "Adv" : "Due";
+    givetake = trans.amount < 0 ? "Taken" : "Given";
+  }
+
   useEffect(() => {
     setNote(trans.note);
   }, [trans]);
@@ -45,17 +54,18 @@ const EditTransact = ({ setEditTransPop, trans }) => {
     <div className="flex flex-col gap-2 rounded-md bg-indigo-400 p-5">
       <h1
         className={`${
-          trans.amount < 0 ? "text-emerald-600" : "text-red-500"
+          givetake == "Taken" ? "text-emerald-600" : "text-red-500"
         } text-2xl font-bold text-center`}
       >
-        ${Math.abs(trans.amount)} {trans.amount < 0 ? "Taken" : "Given"}
+        ${Math.abs(trans.amount)} {givetake}
       </h1>
       <div className="flex justify-between">
         <h1 className="text-sm">
-          Total: {Math.abs(trans.totalAmount)}{" "}
-          {trans.totalAmount < 0 ? "Adv" : "Due"}
+          Total: {Math.abs(trans.totalAmount)} {dueadv}
         </h1>
-        <h1 className="text-sm">{dayjs(trans.date).format("D MMM YYYY hh:mma")}</h1>
+        <h1 className="text-sm">
+          {dayjs(trans.date).format("D MMM YYYY hh:mma")}
+        </h1>
       </div>
       <input
         value={note}

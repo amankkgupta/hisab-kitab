@@ -8,12 +8,19 @@ import EditTransact from "../components/EditTransact";
 
 const CustomerView = () => {
   const navigate = useNavigate();
-  const { customerData, user, setTransData } = useContext(UserContext);
-  const { customerName, customerId, customerInd } = customerData;
+  const { customerData, user, setTransData, records } = useContext(UserContext);
+  const { customerName, customerId, customerInd, isSupplier } = customerData;
   const [addTransPop, setAddTransPop] = useState(false);
   const [editTransPop, setEditTransPop] = useState(false);
   const [transacts, setTransacts] = useState([]);
   const [trans, setTrans] = useState(null);
+
+  let dueadv;
+  if (isSupplier) {
+    dueadv = records[customerInd].totalAmount > 0 ? "Adv" : "Due";
+  } else {
+    dueadv = records[customerInd].totalAmount < 0 ? "Adv" : "Due";
+  }
 
   const handleTrans = (transType) => {
     setAddTransPop(true);
@@ -21,12 +28,13 @@ const CustomerView = () => {
       transType,
       customerName,
       customerId,
+      isSupplier,
     });
   };
 
   const handleEditTrans = (trans) => {
     setEditTransPop(true);
-    setTrans(trans);
+    setTrans({ ...trans, isSupplier });
   };
 
   useEffect(() => {
@@ -58,12 +66,23 @@ const CustomerView = () => {
         <div className="h-12 w-12 bg-yellow-400 rounded-md flex justify-center items-center">
           {customerName[0]}
         </div>
-        <h1>{customerName}</h1>
+        <h1>
+          {customerName} {isSupplier ? "(Supplier)" : ""}
+        </h1>
       </div>
 
       <div className="history w-full flex-grow overflow-auto">
         {transacts &&
           transacts.map((trans, ind) => {
+            let backcolor, dueadv;
+            if (isSupplier) {
+              backcolor = trans.amount < 0 ? "bg-red-400" : "bg-green-300";
+              dueadv = trans.totalAmount < 0 ? "Due" : "Adv";
+            } else {
+              backcolor = trans.amount > 0 ? "bg-red-400" : "bg-green-300";
+              dueadv = trans.totalAmount > 0 ? "Due" : "Adv";
+            }
+
             const currDate = dayjs(trans.date).format("D MMM YYYY");
             const prevDate =
               ind <= 0
@@ -83,17 +102,20 @@ const CustomerView = () => {
 
                 <div
                   className={`${
-                    user.userId == trans.userId ? "justify-end" : ""
-                  } flex`}
+                    backcolor == "bg-red-400" ? "justify-end" : ""
+                  } flex `}
                 >
                   <div
                     onClick={() => {
                       handleEditTrans(trans);
                     }}
-                    className={`${
-                      trans.amount > 0 ? "bg-red-400" : "bg-green-300"
-                    }  m-1 w-3/4 p-1 rounded-md`}
+                    className={`${backcolor}  m-1 w-1/2 p-1 rounded-md`}
                   >
+                    <h1 className="text-sm w-full bg-yellow-100 rounded-md px-1">
+                      {user.userId == trans.userId
+                        ? "Added by me"
+                        : `Added by ${customerName}`}
+                    </h1>
                     <h1
                       className={`${
                         trans.isDeleted ? "line-through" : ""
@@ -104,8 +126,7 @@ const CustomerView = () => {
                     <h1 className="text-center text-sm">{trans.note}</h1>
                     <div className="flex justify-between">
                       <h1 className="text-xs">
-                        Total: {Math.abs(trans.totalAmount)}{" "}
-                        {trans.totalAmount < 0 ? "Adv" : "Due"}
+                        Total: {Math.abs(trans.totalAmount)} {dueadv}
                       </h1>
                       <h1 className="text-xs">{time}</h1>
                     </div>
@@ -123,10 +144,10 @@ const CustomerView = () => {
               <h1 className="font-bold text-2xl">Total</h1>
               <h1
                 className={`${
-                  user.customers[customerInd].totalAmount < 0 ? "text-green-700" : "text-red-700"
+                  dueadv == "Due" ? "text-red-700" : "text-emerald-700"
                 } font-bold text-2xl`}
               >
-                ${Math.abs(user.customers[customerInd].totalAmount)} {user.customers[customerInd].totalAmount < 0 ? "Adv" : "Due"}
+                ${Math.abs(records[customerInd].totalAmount)} {dueadv}
               </h1>
             </div>
           )}

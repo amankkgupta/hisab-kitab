@@ -26,10 +26,8 @@ const Dashboard = () => {
     });
   };
 
-  const handleCustomerView = (name, id, sup) => {
-    navigate(
-      `/customerview?customerName=${name}&customerId=${id}&userId=${user.userId}&isSupplier=${sup}`
-    );
+  const handleCustomerView = (name, id) => {
+    navigate(`/customerview?customerName=${name}&customerId=${id}`);
   };
 
   useEffect(() => {
@@ -114,7 +112,7 @@ const Dashboard = () => {
                   <div
                     className=" flex-grow"
                     onClick={() => {
-                      handleCustomerView(customer.name, customer._id, supplier);
+                      handleCustomerView(customer.name, customer._id);
                     }}
                   >
                     <h1>

@@ -11,21 +11,19 @@ const CustomerView = () => {
   const [addTransPop, setAddTransPop] = useState(false);
   const [editTransPop, setEditTransPop] = useState(false);
   const [transacts, setTransacts] = useState([]);
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [trans, setTrans] = useState(null);
+  const [record, setRecord] = useState(null);
+  const [isSupplier, setIsSupplier] = useState(false);
   const historyDiv = useRef(null);
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const customerName = searchParams.get("customerName");
   const customerId = searchParams.get("customerId");
-  const isSupplier = searchParams.get("isSupplier");
-  const userId = searchParams.get("userId");
 
   let dueadv;
   if (isSupplier) {
-    dueadv = totalAmount > 0 ? "Adv" : "Due";
+    dueadv = record?.totalAmount > 0 ? "Adv" : "Due";
   } else {
-    dueadv = totalAmount < 0 ? "Adv" : "Due";
+    dueadv = record?.totalAmount < 0 ? "Adv" : "Due";
   }
 
   const handleTrans = (transType) => {
@@ -60,7 +58,9 @@ const CustomerView = () => {
       const resData = await res.json();
       if (!res.ok) throw new Error(resData.message || "Unexpected error !");
       setTransacts(resData.trans);
-      setTotalAmount(resData.record.totalAmount);
+      setRecord(resData.record);
+      setIsSupplier(resData.record.userId == customerId ? true : false);
+      console.log(resData);
       scrollToBottom();
     } catch (err) {
       toast.error(err.message);
@@ -68,7 +68,7 @@ const CustomerView = () => {
   };
   useEffect(() => {
     fetchAllTransacts();
-  }, [transacts]);
+  }, []);
 
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -128,7 +128,7 @@ const CustomerView = () => {
                     className={`${backcolor}  m-1 w-1/2 p-1 rounded-md`}
                   >
                     <h1 className="text-sm w-full bg-yellow-100 rounded-md px-1">
-                      {userId == trans.userId
+                      {customerId != trans.userId
                         ? "Added by me"
                         : `Added by ${customerName}`}
                     </h1>
@@ -164,7 +164,7 @@ const CustomerView = () => {
                   dueadv == "Due" ? "text-red-700" : "text-emerald-700"
                 } font-bold text-2xl`}
               >
-                ${Math.abs(totalAmount)} {dueadv}
+                ${Math.abs(record?.totalAmount)} {dueadv}
               </h1>
             </div>
           )}

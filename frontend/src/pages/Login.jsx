@@ -15,7 +15,7 @@ const Login = () => {
     e.preventDefault();
     const basrUrl= import.meta.env.VITE_BACKEND_URL;
     try{
-        const res= await fetch(`${basrUrl}/auth/signin`, {
+        const res= await fetch(`${basrUrl}/api/auth/signin`, {
             method: "POST",
             headers:{
                 "Content-Type": "application/json"

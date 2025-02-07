@@ -3,7 +3,7 @@ const recordModel = require("../models/recordModel");
 const transactionModel = require("../models/transactionModel");
 
 const addTransact = async (req, res) => {
-  const { userId, myId } = req.user;
+  const { userId } = req.user;
   const { customerId, amount, note } = req.body;
   if (!amount)
     return res.status(400).json({ message: "Please Enter Amount !" });

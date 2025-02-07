@@ -21,7 +21,7 @@ const Register = () => {
     e.preventDefault();
     const baseUrl = import.meta.env.VITE_BACKEND_URL;
     try {
-      const res = await fetch(`${baseUrl}/auth/signup`, {
+      const res = await fetch(`${baseUrl}/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

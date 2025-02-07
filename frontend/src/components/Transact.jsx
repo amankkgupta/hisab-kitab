@@ -33,7 +33,7 @@ const Transact = ({ setAddTransPop, fetchAllTransacts }) => {
     const baseUrl = import.meta.env.VITE_BACKEND_URL;
     const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`${baseUrl}/transact/addtransact`, {
+      const res = await fetch(`${baseUrl}/api/transact/addtransact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -14,7 +14,7 @@ const UserProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     const baseUrl = import.meta.env.VITE_BACKEND_URL;
     try {
-      const res = await fetch(`${baseUrl}/customer/fetchuser`, {
+      const res = await fetch(`${baseUrl}/api/customer/fetchuser`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

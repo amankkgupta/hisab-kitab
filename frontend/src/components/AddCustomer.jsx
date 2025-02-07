@@ -16,7 +16,7 @@ const AddCustomer = ({ showAddCustomer, fetchData }) => {
     const token = localStorage.getItem("token");
     const baseUrl = import.meta.env.VITE_BACKEND_URL;
     try {
-      const res = await fetch(`${baseUrl}/customer/addcustomer`, {
+      const res = await fetch(`${baseUrl}/api/customer/addcustomer`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

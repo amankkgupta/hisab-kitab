@@ -48,7 +48,7 @@ const CustomerView = () => {
     const token = localStorage.getItem("token");
     const baseUrl = import.meta.env.VITE_BACKEND_URL;
     try {
-      const res = await fetch(`${baseUrl}/transact/fetchalltransact`, {
+      const res = await fetch(`${baseUrl}/api/transact/fetchalltransact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

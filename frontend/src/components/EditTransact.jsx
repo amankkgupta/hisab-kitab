@@ -28,7 +28,7 @@ const EditTransact = ({ setEditTransPop, trans }) => {
     const token = localStorage.getItem("token");
     const baseUrl = import.meta.env.VITE_BACKEND_URL;
     try {
-      const res = await fetch(`${baseUrl}/transact/edittransact`, {
+      const res = await fetch(`${baseUrl}/api/transact/edittransact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

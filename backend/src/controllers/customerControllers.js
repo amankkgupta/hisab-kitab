@@ -9,20 +9,22 @@ const fetchUser = async (req, res) => {
       path: "customers",
       options: { sort: { date: -1 } },
     });
-    const records = await recordModel
-      .find({
-        $or: user.customers.map((customerId) => ({
-          $or: [
-            { userId, customerId },
-            { userId: customerId, customerId: userId },
-          ],
-        })),
+    const records = await Promise.all(
+      user.customers.map(async (customerId) => {
+        return await recordModel
+          .findOne({
+            $or: [
+              { userId, customerId },
+              { userId: customerId, customerId: userId },
+            ],
+          })
+          .populate({ path: "lastTransact" });
       })
-      .populate({ path: "lastTransact" });
+    );
 
     res.status(200).json({ user, records });
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     res.status(500).json({ message: "Server error !" });
   }
 };

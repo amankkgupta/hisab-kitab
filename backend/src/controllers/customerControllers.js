@@ -21,9 +21,10 @@ const fetchUser = async (req, res) => {
           .populate({ path: "lastTransact" });
       })
     );
+
     res.status(200).json({ user, records });
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     res.status(500).json({ message: "Server error !" });
   }
 };

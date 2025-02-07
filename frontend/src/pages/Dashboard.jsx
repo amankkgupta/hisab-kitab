@@ -46,7 +46,7 @@ const Dashboard = () => {
           {user != null && (
             <h1
               className={`${
-                allTotal < 0 ? "text-green-700" : "text-red-700"
+                allTotal <= 0 ? "text-green-700" : "text-red-700"
               } text-xl font-bold`}
             >
               ${Math.abs(allTotal)} {allTotal < 0 ? "Adv" : "Due"}
@@ -82,19 +82,20 @@ const Dashboard = () => {
         {user != null &&
           user.customers &&
           user.customers.map((customer, ind) => {
-            const supplier = records[ind].userId != user.userId;
+            const supplier = records[ind]?.userId != user.userId;
             let status, totalcolor;
             if (supplier) {
-              status = records[ind].lastTransact.amount < 0 ? "Given" : "Taken";
+              status =
+                records[ind]?.lastTransact?.amount < 0 ? "Given" : "Taken";
               totalcolor =
-                records[ind].totalAmount < 0
+                records[ind]?.totalAmount <= 0
                   ? "text-red-700"
                   : "text-emerald-700";
             } else {
               status =
-                records[ind].lastTransact?.amount < 0 ? "Taken" : "Given";
+                records[ind].lastTransact?.amount <= 0 ? "Taken" : "Given";
               totalcolor =
-                records[ind].totalAmount < 0
+                records[ind]?.totalAmount <= 0
                   ? "text-emerald-700"
                   : "text-red-700";
             }
@@ -102,7 +103,9 @@ const Dashboard = () => {
             return (
               <div
                 key={ind}
-                className={`flex items-center my-2 p-1 ${supplier?"bg-blue-400":"bg-indigo-400"} rounded-md`}
+                className={`flex items-center my-2 p-1 ${
+                  supplier ? "bg-blue-400" : "bg-indigo-400"
+                } rounded-md`}
               >
                 <div className="flex gap-2 items-center w-full">
                   <div className="bg-amber-300 rounded-md h-12 w-12 flex justify-center items-center">
@@ -127,9 +130,9 @@ const Dashboard = () => {
                               : ""
                           } text-xs text-gray-800`}
                         >{`$${Math.abs(
-                          records[ind].lastTransact.amount
+                          records[ind]?.lastTransact.amount
                         )} ${status} on ${dayjs(
-                          records[0].lastTransact?.date
+                          records[0]?.lastTransact?.date
                         ).format("D MMM YYYY hh:mma")}`}</h1>
                       </>
                     )}
@@ -137,7 +140,7 @@ const Dashboard = () => {
                 </div>
                 <div className="flex justify-between items-center gap-1">
                   <h1 className={`${totalcolor} font-bold`}>
-                    ${Math.abs(records[ind].totalAmount)}
+                    ${Math.abs(records[ind]?.totalAmount)}
                   </h1>
                   <button
                     onClick={() =>

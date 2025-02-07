@@ -20,7 +20,7 @@ const Transact = ({ setAddTransPop, fetchAllTransacts }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let amount = data.amount;
-    if (transData.isSupplier) {
+    if (!transData.isSupplier) {
       if (!transData.transType) {
         amount = -Math.abs(Number(amount));
       }

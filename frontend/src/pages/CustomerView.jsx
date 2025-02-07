@@ -12,6 +12,7 @@ const CustomerView = () => {
   const [editTransPop, setEditTransPop] = useState(false);
   const [transacts, setTransacts] = useState([]);
   const [record, setRecord] = useState(null);
+  const [trans, setTrans] = useState(null);
   const [isSupplier, setIsSupplier] = useState(false);
   const historyDiv = useRef(null);
   const location = useLocation();
@@ -37,9 +38,9 @@ const CustomerView = () => {
     scrollToBottom();
   };
 
-  const handleEditTrans = (trans) => {
+  const handleEditTrans = (trans, addedBy) => {
     setEditTransPop(true);
-    setTrans({ ...trans, isSupplier });
+    setTrans({ ...trans, isSupplier, addedBy });
     scrollToBottom();
   };
 
@@ -99,6 +100,10 @@ const CustomerView = () => {
               dueadv = trans.totalAmount > 0 ? "Due" : "Adv";
             }
 
+            const addedBy=customerId != trans.userId
+            ? "Added by me"
+            : `Added by ${customerName}`
+
             const currDate = dayjs(trans.date).format("D MMM YYYY");
             const prevDate =
               ind <= 0
@@ -123,14 +128,12 @@ const CustomerView = () => {
                 >
                   <div
                     onClick={() => {
-                      handleEditTrans(trans);
+                      handleEditTrans(trans,addedBy);
                     }}
                     className={`${backcolor}  m-1 w-1/2 p-1 rounded-md`}
                   >
                     <h1 className="text-sm w-full bg-yellow-100 rounded-md px-1">
-                      {customerId != trans.userId
-                        ? "Added by me"
-                        : `Added by ${customerName}`}
+                      {addedBy}
                     </h1>
                     <h1
                       className={`${

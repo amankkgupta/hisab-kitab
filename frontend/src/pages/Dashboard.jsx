@@ -102,7 +102,7 @@ const Dashboard = () => {
             return (
               <div
                 key={ind}
-                className="flex items-center my-2 p-1 bg-indigo-400 rounded-md"
+                className={`flex items-center my-2 p-1 ${supplier?"bg-blue-400":"bg-indigo-400"} rounded-md`}
               >
                 <div className="flex gap-2 items-center w-full">
                   <div className="bg-amber-300 rounded-md h-12 w-12 flex justify-center items-center">

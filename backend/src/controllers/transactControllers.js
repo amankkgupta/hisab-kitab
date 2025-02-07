@@ -62,6 +62,9 @@ const editTransact = async (req, res) => {
     return res.status(403).json({ message: "Not Autherized !" });
   try {
     if (isDeleted) {
+      if (trans.isDeleted) {
+        return res.status(401).json({ message: "Already deleted !" });
+      }
       trans.isDeleted = true;
       await trans.save();
       await recordModel.updateOne(

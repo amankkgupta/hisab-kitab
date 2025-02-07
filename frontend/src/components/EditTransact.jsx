@@ -52,6 +52,7 @@ const EditTransact = ({ setEditTransPop, trans }) => {
 
   return (
     <div className="flex flex-col gap-2 rounded-md bg-indigo-400 p-5">
+      <h1 className="text-sm px-2 bg-yellow-100 rounded-md">{trans.addedBy}</h1>
       <h1
         className={`${
           givetake == "Taken" ? "text-emerald-600" : "text-red-500"

@@ -28,6 +28,7 @@ const UserProvider = ({ children }) => {
         else sum += record.totalAmount;
         return sum;
       }, 0);
+      // console.log(resData);
       setAllTotal(total);
       setUser(resData.user);
       setRecords(resData.records);

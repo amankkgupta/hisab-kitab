@@ -20,12 +20,14 @@ const Transact = ({ setAddTransPop, fetchAllTransacts }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let amount = data.amount;
+    if(amount<=0) return toast.warning("Please enter positive value");
+    console.log(transData.isSupplier, transData.transType);
     if (!transData.isSupplier) {
-      if (!transData.transType) {
+      if (transData.transType) {
         amount = -Math.abs(Number(amount));
       }
     } else {
-      if (transData.transType) {
+      if (!transData.transType) {
         amount = -Math.abs(Number(amount));
       }
     }
@@ -49,9 +51,9 @@ const Transact = ({ setAddTransPop, fetchAllTransacts }) => {
       if (!res.ok) throw new Error(resData.message || "unpected error");
       toast.success(resData.message);
       setAddTransPop(false);
-      if(fetchAllTransacts){
+      if (fetchAllTransacts) {
         fetchAllTransacts();
-      }else {
+      } else {
         fetchData();
       }
     } catch (err) {

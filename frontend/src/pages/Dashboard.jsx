@@ -41,12 +41,16 @@ const Dashboard = () => {
   return (
     <div className="md:max-w-1/2 h-full w-full p-2 flex flex-col">
       <div>
+        <div className="flex gap-2 items-center bg-purple-400 p-1 rounded-md">
+          <div className="h-11 w-11 bg-amber-300 rounded-full flex justify-center items-center">{user?.name[0]}</div>
+          <h1>{user?.name}</h1>
+        </div>
         <div className="flex justify-between item-center my-1">
           <h1 className="text-xl font-bold">Total</h1>
           {user != null && (
             <h1
               className={`${
-                allTotal <= 0 ? "text-green-700" : "text-red-700"
+                allTotal < 0 ? "text-green-700" : "text-red-700"
               } text-xl font-bold`}
             >
               ${Math.abs(allTotal)} {allTotal < 0 ? "Adv" : "Due"}
@@ -88,14 +92,14 @@ const Dashboard = () => {
               status =
                 records[ind]?.lastTransact?.amount < 0 ? "Given" : "Taken";
               totalcolor =
-                records[ind]?.totalAmount <= 0
+                records[ind]?.totalAmount < 0
                   ? "text-red-700"
                   : "text-emerald-700";
             } else {
               status =
-                records[ind].lastTransact?.amount <= 0 ? "Taken" : "Given";
+                records[ind].lastTransact?.amount < 0 ? "Taken" : "Given";
               totalcolor =
-                records[ind]?.totalAmount <= 0
+                records[ind]?.totalAmount < 0
                   ? "text-emerald-700"
                   : "text-red-700";
             }
@@ -150,6 +154,7 @@ const Dashboard = () => {
                   >
                     Take
                   </button>
+
                   <button
                     onClick={() =>
                       handleTrans(0, customer.name, customer._id, supplier)

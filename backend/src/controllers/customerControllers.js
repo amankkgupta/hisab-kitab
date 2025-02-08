@@ -24,7 +24,7 @@ const fetchUser = async (req, res) => {
 
     res.status(200).json({ user, records });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     res.status(500).json({ message: "Server error !" });
   }
 };
@@ -32,6 +32,7 @@ const fetchUser = async (req, res) => {
 const addCustomer = async (req, res) => {
   const { name, phone } = req.body;
   const { userId, myId } = req.user;
+  console.log(userId);
   try {
     let customer;
     if (phone) {
@@ -66,6 +67,7 @@ const addCustomer = async (req, res) => {
         totalAmount: 0,
         lastTransact: null,
       });
+      
     }
     res.status(201).json({ message: "Customer added successfully !" });
   } catch (err) {

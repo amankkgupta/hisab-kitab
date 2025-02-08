@@ -61,7 +61,7 @@ const CustomerView = () => {
       setTransacts(resData.trans);
       setRecord(resData.record);
       setIsSupplier(resData.record.userId == customerId ? true : false);
-      console.log(resData);
+      // console.log(resData);
       scrollToBottom();
     } catch (err) {
       toast.error(err.message);

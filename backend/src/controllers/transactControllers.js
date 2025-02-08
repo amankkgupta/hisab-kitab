@@ -5,6 +5,7 @@ const transactionModel = require("../models/transactionModel");
 const addTransact = async (req, res) => {
   const { userId } = req.user;
   const { customerId, amount, note } = req.body;
+  console.log(amount);
   if (!amount)
     return res.status(400).json({ message: "Please Enter Amount !" });
   try {

@@ -20,11 +20,6 @@
   - Frontend: Vercel
   - Backend: Render
 
-## Deployment
-
-- The **frontend** is deployed on [Vercel](https://vercel.com/), ensuring fast and reliable static site hosting.
-- The **backend** is deployed on [Render](https://render.com/), providing a scalable and reliable environment for the API and database connections.
-
 ## Usage
 
 1. Sign up for an account or log in.

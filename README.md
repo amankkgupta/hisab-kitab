@@ -13,12 +13,9 @@
 
 ## Tech Stack
 
-- **Frontend**: React.js (deployed on Vercel)
-- **Backend**: Node.js, Express.js (deployed on Render)
-- **Database**: MongoDB (hosted on MongoDB Atlas)
-- **Deployment**: 
-  - Frontend: Vercel
-  - Backend: Render
+- **Frontend**: React.js, Tailwind CSS
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB
 
 ## Usage
 

@@ -33,7 +33,7 @@ const Register = () => {
         throw new Error(resData.message || "Unexpected error occurred");
       }
       toast.success(resData.message);
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       toast.error(err.message);
     }

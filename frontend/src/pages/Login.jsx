@@ -27,7 +27,7 @@ const Login = () => {
             throw new Error(resData.message || "Something went wrong");
         toast.success(resData.message);
         localStorage.setItem("token", resData.token);
-        navigate("/dashboard");
+        navigate("/");
     } catch(err) {
         toast.error(err.message);
     }

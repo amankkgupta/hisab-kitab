@@ -26,6 +26,11 @@ const Dashboard = () => {
     });
   };
 
+  const logout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
   const handleCustomerView = (name, id) => {
     navigate(`/customerview?customerName=${name}&customerId=${id}`);
   };
@@ -41,10 +46,20 @@ const Dashboard = () => {
   return (
     <div className="md:max-w-1/2 h-full w-full p-2 flex flex-col">
       <div>
-        <div className="flex gap-2 items-center bg-purple-400 p-1 rounded-md">
-          <div className="h-11 w-11 bg-amber-300 rounded-full flex justify-center items-center">{user?.name[0]}</div>
-          <h1>{user?.name}</h1>
+        <div className="flex gap-2 items-center justify-between bg-purple-400 p-1 rounded-md">
+          <div className="flex gap-2 items-center">
+            <div className="h-11 w-11 bg-amber-300 rounded-full flex justify-center items-center">
+              {user?.name[0]}
+            </div>
+            <h1>{user?.name}</h1>
+          </div>
+          <div>
+            <h1 onClick={logout} className="">
+              Logout
+            </h1>
+          </div>
         </div>
+
         <div className="flex justify-between item-center my-1">
           <h1 className="text-xl font-bold">Total</h1>
           {user != null && (
